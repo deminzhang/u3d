@@ -4,14 +4,16 @@ using System.Collections;
 using System.IO;
 using SLua;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using UnityEngine.SceneManagement;
+using UnityEngine.AddressableAssets; //Window->Package Manager 搜addressables install
+using UnityEngine.ResourceManagement;
 
-public class loader : MonoBehaviour
+public class Loader : MonoBehaviour
 {
     static LuaSvr l;
     public Text logText;
+    public String luaPath = "/Scripts_Lua/";
+
     int progress = 0;
 
 #if UNITY_IPHONE && !UNITY_EDITOR
@@ -72,7 +74,10 @@ public class loader : MonoBehaviour
     void OnGUI()
     {
         if (progress != 100)
-            GUI.Label(new Rect(0, 0, 100, 50), string.Format("Loading {0}%", progress));
+        {
+            //GUI.Label(new Rect(0, 15, 150, 50), string.Format("Load Scripts... {0}%", progress));
+            GUI.Label(new Rect(Screen.width/2-100, Screen.height-30, 200, 50), string.Format("Load Scripts... {0}%", progress));
+        }
 
         //LuaFunction func;
         //touch
@@ -223,14 +228,14 @@ public class loader : MonoBehaviour
     {
         string newFn = fn.Replace(".", "/");
         byte[] data = null;
-        string path = Application.persistentDataPath + "/Scripts_Lua/" + newFn + ".lua";
+        string path = Application.persistentDataPath + luaPath + newFn + ".lua";
         if (File.Exists(path))
         {
             data = File.ReadAllBytes(path);
         }
         if (data == null)
         {
-            path = Application.dataPath + "/Scripts_Lua/" + newFn + ".lua";
+            path = Application.dataPath + luaPath + newFn + ".lua";
             if (File.Exists(path))
             {
                 data = File.ReadAllBytes(path);
@@ -244,12 +249,12 @@ public class loader : MonoBehaviour
         return data;
     }
 
-    
+    /****************************************************************************/
     void LoadSceneAsync(string name, LuaFunction onTick, LuaFunction onComplete)
     {
-        StartCoroutine(_loadSceneAsync(name, onTick, onComplete));
+        StartCoroutine(I_loadSceneAsync(name, onTick, onComplete));
     }
-    IEnumerator _loadSceneAsync(string name, LuaFunction onTick, LuaFunction onComplete)
+    IEnumerator I_loadSceneAsync(string name, LuaFunction onTick, LuaFunction onComplete)
     {
         AsyncOperation async = SceneManager.LoadSceneAsync(name);
         async.allowSceneActivation = false;
@@ -265,4 +270,5 @@ public class loader : MonoBehaviour
         }
         onComplete.call();
     }
+
 }

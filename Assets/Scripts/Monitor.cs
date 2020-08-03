@@ -37,9 +37,9 @@ public class Monitor : MonoBehaviour {
     void OnGUI()
     {
         if (!FPSDisplay) return;
-        //GUI.Label(new Rect(0, 0, 100, 50), stringFps);
-        GUI.Label(new Rect(0, 10, 100, 50), stringFps);
+        GUI.Label(new Rect(0, 0, 100, 50), stringFps);
+        //GUI.Label(new Rect(0, 15, 100, 50), stringFps);
 
     }
-	
+
 }
